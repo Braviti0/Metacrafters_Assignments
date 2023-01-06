@@ -3,7 +3,7 @@
 pragma solidity ^0.8.13;
 
 // This contracts demonstrates the use of global functions for msg type (msg.sender, msg.value)
-// msg.gasleft didn't work so I used gasleft() and deleted it
+// msg.gasleft didn't work so I used gasleft()
 contract counter {
     uint i;
     address payable owner;
@@ -32,14 +32,15 @@ contract counter {
     // if the owner calls the function
     // and if another address pays a sufficient fee to change i
     // usage of msg.value is used here
+    // usage of gasleft is used here
     function change_i (uint _i) public payable returns (uint y) {
         if (msg.sender == owner) {
             i = _i;
         } else {
         require (msg.value > 300000, "the minimum fee for changing i was not sent ");
         i = _i;
-        return i;
         }
+        return gasleft();
     }
 
     function withdraw () public payable onlyOwner {
