@@ -43,7 +43,7 @@ contract SavingsWallet {
     // Can be called by child contracts
     function Withdraw () public payable onlyOwner {
         bool sent = owner.send(address(this).balance);
-        require(sent, 'balance is null');
+        require(sent, "balance is null");
     }
 
 }
