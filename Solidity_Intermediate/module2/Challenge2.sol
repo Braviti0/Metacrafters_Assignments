@@ -22,8 +22,8 @@ contract OneCall {
 
     function setVars(address _contract, uint _num) public payable returns (bool, bytes memory){
         // OneCall's storage is set, Twocall is not modified.
-        (bool success, bytes memory data) = _contract.delegatecall(
-            abi.encodeWithSignature("setVars(uint256)", _num)
+        (bool success, bytes memory data) = _contract.call(
+            abi.encodeWithSignature("setVars()",)
         );
         return (success, data);
     }
