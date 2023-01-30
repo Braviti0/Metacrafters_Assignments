@@ -5,7 +5,6 @@ contract erc20Token {
 
     // State variables
     uint TotalSupply;
-    string tokenName;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint256)) private allowances;
 
