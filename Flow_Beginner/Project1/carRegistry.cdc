@@ -1,6 +1,6 @@
 pub contract carRegistry {
 
-    // Dictionary that stores the list of cars owned by an address.
+    // array that stores a list of cars.
     pub var carRegister: [Car]
     
     // Struct that represents a car with its attributes.
@@ -21,11 +21,11 @@ pub contract carRegistry {
     pub fun addCar(model: String, brand: String, owner: Address) {
         // Create a new Car instance with the provided data.
         let newCar = Car(_model: model, _brand: brand, _owner: owner)
-        // Add the new car to the carRegister dictionary with the owner's address as the key.
+        // Add the new car to the carRegister array.
         self.carRegister.append(newCar)
     }
 
-    // Initializer function that initializes the carRegister dictionary to an empty dictionary.
+    // Initializer function that initializes the carRegister list to an empty list.
     init() {
         self.carRegister = []
     }

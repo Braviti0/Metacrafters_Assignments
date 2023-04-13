@@ -6,7 +6,7 @@ transaction(_model: String, _brand: String, _owner: Address) {
 
     // The prepare function sets the signer of the transaction to the AuthAccount.
     prepare(signer: AuthAccount) {
-        // In this case, the prepare function doesn't need to do anything else.
+        // In this casea, the prepare function doesn't need to do anything else.
     }
 
     // The execute function calls the addCar function of the carRegistry contract with the provided parameters.
@@ -16,7 +16,7 @@ transaction(_model: String, _brand: String, _owner: Address) {
         // Log a message to indicate that the car details have been stored.
         log("Car details stored.")
 
-        // Log the index of the new car in the carRegister dictionary.
+        // Log the index of the new car in the carRegister array.
         log("Your index is")
         log(carRegistry.carRegister.length - 1)
     }
