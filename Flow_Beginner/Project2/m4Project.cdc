@@ -68,3 +68,4 @@ access(all) contract SomeContract {
         self.testStruct = SomeStruct()
     }
 }
+ 

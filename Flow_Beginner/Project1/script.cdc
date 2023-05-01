@@ -1,5 +1,5 @@
 // Import the carRegistry contract from the blockchain.
-import carRegistry from 0x01
+import carRegistry from "./carRegistry"
 
 // Define a script named that returns a Car struct.
 pub fun main(index: UInt): carRegistry.Car {
