@@ -20,24 +20,34 @@ getNFTids.cdc IS A SCRIPT THAT RETURNS THE NFT IDs FOR ALL THE CryptoPoops NFTs 
 
 ## Getting Started
 COPY AND PASTE THE CONTRACTS, TRANSACTIONS AND SCRIPTS TO THE FLOW BLOCKCHAIN
+
 DEPLOY THE nftStandard.cdc CONTRACT TO ACCOUNT 0x01
+
 REPLACE THE FIRST LINE OF Project3s.cdc with "import NonFungibleToken from 0x01"
+
 DEPLOY THE nftStandard.cdc CONTRACT TO ACCOUNT 0x01
+
 REPLACE THE FIRST AND SECOND LINES OF ALL THE TRANSACTIONS AND SCRIPTS WITH THE CODE SEGMENT BELOW
 
 import CryptoPoops from 0x01
+
 import NonFungibleToken from 0x01
 
 SIGN THE FIRST TRANSACTION (createCollection.cdc) WITH ADDRESS 0x02 AND SEND IT
+
 SIGN THE SECOND TRANSACTION (mintNFT.cdc) WITH ADDRESS 0x01 AND SEND IT WITH THE PARAMETERS BELOW
 
 CONSTANT
+
 recipient = 0x02
 
 VARIABLE
+
 name = Jacob
+
 favoriteFood = Sushi
-luckyNumber = 5
+
+luckyNumber = 23
 
 
 ### Executing program
@@ -53,6 +63,7 @@ WE WILL PICK ONE OF THESE IDs AND PASS IT AS THE index PARAMETER INTO THE NEXT S
 EXECUTE THE SCRIPT (accessNFT.cdc) WITH THE FOLLOWING PARAMETERS
 
 index = *SPECIFIED ABOVE*
+
 User = 0x02
 
 ## Authors
@@ -60,6 +71,7 @@ User = 0x02
 Contributors names and contact info
 
 JACOB TUCKER
+
 REDTIBBY
 
 
