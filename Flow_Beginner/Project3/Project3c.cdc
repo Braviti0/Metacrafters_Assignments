@@ -85,7 +85,7 @@ pub contract CryptoPoops: NonFungibleToken {
       return <- create NFT(_name: name, _favouriteFood: favouriteFood, _luckyNumber: luckyNumber)
     }
 
-    pub fun createMinter(): @Minter {
+    access(contract)  fun createMinter(): @Minter {
       return <- create Minter()
     }
 
@@ -97,3 +97,4 @@ pub contract CryptoPoops: NonFungibleToken {
     self.account.save(<- create Minter(), to: /storage/Minter)
   }
 }
+ 
