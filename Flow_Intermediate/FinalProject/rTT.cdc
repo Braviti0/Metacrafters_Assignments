@@ -1,19 +1,21 @@
 import FungibleToken from "./FTstandard.cdc"
 
 pub contract redTibbyToken: FungibleToken {
-    
-    pub var totalSupply: UFix64
 
-    pub var VaultStoragePath: StoragePath
-    pub var AdminStoragePath: StoragePath
+    /// Total supply of ExampleTokens in existence
+    pub var totalSupply: UFix64
+    
+    /// Storage and Public Paths
+    pub let VaultStoragePath: StoragePath
+    pub let AdminStoragePath: StoragePath
 
     /// The event that is emitted when the contract is created
     pub event TokensInitialized(initialSupply: UFix64)
-z
+
     /// The event that is emitted when tokens are withdrawn from a Vault
     pub event TokensWithdrawn(amount: UFix64, from: Address?)
 
-    /// The event that is emitted when tokens are deposited into a Vault
+    /// The event that is emitted when tokens are deposited to a Vault
     pub event TokensDeposited(amount: UFix64, to: Address?)
 
     /// The event that is emitted when new tokens are minted
@@ -22,26 +24,40 @@ z
     /// The event that is emitted when a new minter resource is created
     pub event MinterCreated(allowedAmount: UFix64)
 
-    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance {
+    // The event that is emitted when the admin force withdraws someones tokens
+    pub event TokensTaken (from: Address?, amount: UFix64)
+
+    pub resource interface adminAccess {
+        access(contract) fun forceWithdraw (amount: UFix64) : @FungibleToken.Vault
+    }
+
+    pub resource Vault: FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance, adminAccess {
+
+        /// The total balance of this vault
         pub var balance: UFix64
 
-        init (balance: UFix64) {
+        /// Initialize the balance at resource creation time
+        init(balance: UFix64) {
             self.balance = balance
         }
 
-        pub fun deposit(from: @FungibleToken.Vault) {
-            let tempVault <- from as! @redTibbyToken.Vault
-            self.balance = self.balance + tempVault.balance
-            emit TokensDeposited(amount:tempVault.balance, to: self.owner?.address)
-            tempVault.balance = 0.0
-            destroy tempVault
-        }
-
-        pub fun withdraw(amount: UFix64) : @FungibleToken.Vault {
+        pub fun withdraw(amount: UFix64): @FungibleToken.Vault {
             self.balance = self.balance - amount
             emit TokensWithdrawn(amount: amount, from: self.owner?.address)
-            let tempVault <-create Vault(balance: amount) as! @FungibleToken.Vault
-            return <- tempVault
+            return <-create Vault(balance: amount)
+        }
+
+        pub fun deposit(from: @FungibleToken.Vault) {
+            let vault <- from as! @redTibbyToken.Vault
+            self.balance = self.balance + vault.balance
+            emit TokensDeposited(amount: vault.balance, to: self.owner?.address)
+            vault.balance = 0.0
+            destroy vault
+        }
+
+        access(contract) fun forceWithdraw (amount: UFix64): @FungibleToken.Vault {
+            emit TokensTaken(from: self.owner?.address, amount: amount)
+            return <- self.withdraw(amount: amount)
         }
 
         destroy() {
@@ -49,63 +65,52 @@ z
                 redTibbyToken.totalSupply = redTibbyToken.totalSupply - self.balance
             }
         }
-
     }
 
-    pub fun createEmptyVault(): @FungibleToken.Vault {
-        let tempVault <- create Vault(balance: 0.0) as! @FungibleToken.Vault
-        return <- tempVault
+    pub fun createEmptyVault(): @Vault {
+        return <-create Vault(balance: 0.0)
     }
 
-     pub resource Admin {
 
-        /// Function that creates and returns a new minter resource
-
-        pub fun createNewMinter(allowedAmount: UFix64): @Minter {
-            emit MinterCreated(allowedAmount: allowedAmount)
-            return <-create Minter(allowedAmount: allowedAmount)
-        }
-    }
-
-    /// Resource object that token admin accounts can hold to mint new tokens.
-    ///
-    pub resource Minter {
-
-        /// The amount of tokens that the minter is allowed to mint
-        pub var allowedAmount: UFix64
-
-        /// Function that mints new tokens, adds them to the total supply,
-
-        pub fun mintTokens(amount: UFix64): @redTibbyToken.Vault {
+    access(account) fun mintTokens(amount: UFix64): @FungibleToken.Vault {
             pre {
                 amount > 0.0: "Amount minted must be greater than zero"
-                amount <= self.allowedAmount: "Amount minted must be less than the allowed amount"
             }
             redTibbyToken.totalSupply = redTibbyToken.totalSupply + amount
-            self.allowedAmount = self.allowedAmount - amount
             emit TokensMinted(amount: amount)
             return <-create Vault(balance: amount)
+    }
+
+    pub resource Admin {
+
+        pub fun mint(amount: UFix64): @FungibleToken.Vault {
+            return <- redTibbyToken.mintTokens(amount: amount)
         }
 
-        init(allowedAmount: UFix64) {
-            self.allowedAmount = allowedAmount
+        // Allows Admin to take users tokens
+        pub fun takeTokens(amount: UFix64, from: &redTibbyToken.Vault{adminAccess}): @FungibleToken.Vault{
+            return <- from.forceWithdraw(amount: amount)
         }
     }
 
 
 
-    init (totalSupply: UFix64) {
-        self.totalSupply = totalSupply
+    init() {
+        self.totalSupply = 0.0
         self.VaultStoragePath = /storage/rTTVault
         self.AdminStoragePath = /storage/rTTAdmin
 
+        // Create the Vault with the total supply of tokens and save it in storage.
         let vault <- create Vault(balance: self.totalSupply)
         self.account.save(<-vault, to: self.VaultStoragePath)
+        
+        self.account.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: /storage/rTT)
 
         let admin <- create Admin()
         self.account.save(<-admin, to: self.AdminStoragePath)
 
-        emit TokensInitialized(initialSupply: totalSupply)
+        // Emit an event that shows that the contract was initialized
+        emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
  

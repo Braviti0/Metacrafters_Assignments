@@ -19,5 +19,9 @@ transaction(recipient: Address, amount: UFix64) {
   execute {
     let tokens <- self.Vault.withdraw(amount: amount)
     self.RecipientVault.deposit(from: <- tokens)
+
+    log ("transfer succesfully")
+    log(amount.toString().concat(" transferred to"))
+    log(recipient)
   }
 }

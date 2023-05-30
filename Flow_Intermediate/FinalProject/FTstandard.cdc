@@ -235,4 +235,3 @@ pub contract interface FungibleToken {
         }
     }
 }
- 
