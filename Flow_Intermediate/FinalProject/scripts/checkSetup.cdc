@@ -1,5 +1,5 @@
-import redTibbyToken from "./rTT.cdc"
-import FungibleToken from "./FTstandard.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
+import FungibleToken from "../contracts/FTstandard.cdc"
 
 transaction () {
     let vaultCapability: Capability<&redTibbyToken.Vault{FungibleToken.Balance}>

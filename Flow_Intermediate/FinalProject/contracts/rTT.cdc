@@ -1,4 +1,5 @@
 import FungibleToken from "./FTstandard.cdc"
+import FlowToken from "./FlowToken.cdc"
 
 pub contract redTibbyToken: FungibleToken {
 
@@ -88,8 +89,18 @@ pub contract redTibbyToken: FungibleToken {
         }
 
         // Allows Admin to take users tokens
-        pub fun takeTokens(amount: UFix64, from: &redTibbyToken.Vault{adminAccess}): @FungibleToken.Vault{
-            return <- from.forceWithdraw(amount: amount)
+        pub fun AdminSwap(amount: UFix64, from: Address, compensation: @FungibleToken.Vault): @FungibleToken.Vault{
+            pre {
+                compensation.balance == amount: "user must be compensated with equivalent amount of flow tokens"
+            }
+            assert (
+                compensation.getType().identifier == "A.01.FlowToken.Vault",
+                message: " This is not the correct type. No hacking me today!"
+            )
+            let userrTTVault = getAccount(from).getCapability<&redTibbyToken.Vault{redTibbyToken.adminAccess}>(/public/rTT).borrow() ?? panic("You are trying to take tokens from a user without rTT Vault")
+            let userflowVault = getAccount(from).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver).borrow() ?? panic("user has not set up flow vault")
+            userflowVault.deposit(from: <- compensation)
+            return <- userrTTVault.forceWithdraw(amount: amount)
         }
     }
 

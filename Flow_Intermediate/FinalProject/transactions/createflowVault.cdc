@@ -1,5 +1,5 @@
-import FlowToken from "./FlowToken.cdc"
-import FungibleToken from "./FTstandard.cdc"
+import FlowToken from "../contracts/FlowToken.cdc"
+import FungibleToken from "../contracts/FTstandard.cdc"
 
 transaction () {
 

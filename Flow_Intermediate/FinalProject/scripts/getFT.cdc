@@ -1,4 +1,4 @@
-import FungibleToken from "./FTstandard.cdc"
+import FungibleToken from "../contracts/FTstandard.cdc"
 
 pub fun main(user: Address):  {Type: data} {
 

@@ -1,6 +1,6 @@
-import redTibbyToken from "./rTT.cdc"
-import FungibleToken from "./FTstandard.cdc"
-import FlowToken from "./FlowToken.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
+import FungibleToken from "../contracts/FTstandard.cdc"
+import FlowToken from "../contracts/FlowToken.cdc"
 
 pub fun main (_address: Address): [Wallet] {
 
