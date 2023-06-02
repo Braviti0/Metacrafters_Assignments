@@ -95,6 +95,9 @@ contract MBerc20 is erc20Token {
 
     // event (emitted whenever a token burn occurs)
     event Burned (address indexed Burner, uint tokens);
+    
+    // event (emitted whenever a token redemption occurs)
+    event redeemed (address indexed redeemer, uint tokens);
 
     // event (emitted whenever a whitelist occurs)
     event Chmod (address indexed Owner, address indexed trusted, string indexed permission);
@@ -134,20 +137,15 @@ contract MBerc20 is erc20Token {
         emit Burned(msg.sender, tokens);
         return true;
     }
-
-    // function (whitelists a given address)
-    function whitelist (address trusted) public onlyOwner returns (bool) {
-        whitelisted[trusted] = true;
-        emit Chmod(msg.sender, trusted, "whitelisted");
+    
+    // function (allows any address to redeems tokens for another asset, address must own these tokens)
+    function redeem (uint tokens) public enoughBalance(msg.sender, tokens) returns (bool) {
+        balances[msg.sender] -= tokens;
+        TotalSupply -= tokens;
+        emit Burned(msg.sender, tokens);
         return true;
     }
 
-    // function (removes address from whitelist)
-    function blacklist (address distrusted) public onlyOwner returns (bool) {
-        whitelisted[distrusted] = false;
-        emit Chmod(msg.sender, distrusted, "blacklisted");
-        return true;
-    }
 
     function changeOwner (address newOwner) public onlyOwner returns (bool) {
         address oldOwner = owner;
