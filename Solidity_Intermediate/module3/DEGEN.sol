@@ -8,6 +8,7 @@ contract erc20Token {
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint256)) private allowances;
 
+
     // constructor (mints tokens to msg.sender during contract deployment)
     constructor (uint256 total) {
         TotalSupply = total;
@@ -15,8 +16,8 @@ contract erc20Token {
     }
 
     // State constants
-    string public constant name = "redtibbyMetacrafterToken";
-    string public constant symbol = "rTMT";
+    string public constant name = "Degen";
+    string public constant symbol = "DGN";
     uint8 public constant decimals = 0;
 
     // event (emitted for each approval)
@@ -75,6 +76,7 @@ contract erc20Token {
         emit Transfer(from, to, tokens);
         return true;
     }
+
 }
 
 // mintable and burnable variant
@@ -83,9 +85,20 @@ contract MBerc20 is erc20Token {
     // EXTRA FUNCTIONALITY (NOT ERC20 PREREQUISITE)
     // permit mint and burn of tokens
 
+    // store item struct
+    struct item {
+        string name;
+        uint price;
+    }
+
+    mapping (address => uint[]) ownership;
+
+    item[2] items;
     // constructor (same as ercToken)
     // also sets owner address as msg.sender during deployment
     constructor(uint total) erc20Token (total) {
+        items[0] = item("shirt", 20);
+        items[1] = item("trouser", 50);
         owner = msg.sender;
         whitelisted[msg.sender] = true;
     }
@@ -95,15 +108,12 @@ contract MBerc20 is erc20Token {
 
     // event (emitted whenever a token burn occurs)
     event Burned (address indexed Burner, uint tokens);
-    
-    // event (emitted whenever a token redemption occurs)
-    event redeemed (address indexed redeemer, uint tokens);
-
-    // event (emitted whenever a whitelist occurs)
-    event Chmod (address indexed Owner, address indexed trusted, string indexed permission);
 
     // event (changes owner)
     event Chown (address indexed oldOwner, address indexed newOwner);
+    
+    // event (emitted whenever a token redemption occurs)
+    event redeemed (address indexed redeemer,uint indexed item, uint tokens);
 
 
     // state variables
@@ -137,14 +147,6 @@ contract MBerc20 is erc20Token {
         emit Burned(msg.sender, tokens);
         return true;
     }
-    
-    // function (allows any address to redeems tokens for another asset, address must own these tokens)
-    function redeem (uint tokens) public enoughBalance(msg.sender, tokens) returns (bool) {
-        balances[msg.sender] -= tokens;
-        TotalSupply -= tokens;
-        emit Burned(msg.sender, tokens);
-        return true;
-    }
 
 
     function changeOwner (address newOwner) public onlyOwner returns (bool) {
@@ -152,5 +154,25 @@ contract MBerc20 is erc20Token {
         owner = newOwner;
         emit Chown(oldOwner, newOwner);
         return true;
+    }
+    
+
+    function redeem(uint _item) public returns (bool) {
+        uint tokens = items[_item].price;
+        return redemption(_item, tokens);
+
+    }
+
+    // function (allows any address to redeems tokens for another asset, address must own these tokens)
+    function redemption (uint _item, uint tokens) private enoughBalance(msg.sender, tokens) returns (bool) {
+        balances[msg.sender] -= tokens;
+        TotalSupply -= tokens;
+        ownership[msg.sender].push(_item);
+        emit redeemed(msg.sender,_item ,tokens);
+        return true;
+    }
+
+    function viewOwned(address user) public view returns (uint[] memory) {
+        return ownership[user];
     }
 }
