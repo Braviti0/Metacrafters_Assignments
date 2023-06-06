@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity 0.8.13;
 
 contract erc20Token {
 
@@ -91,9 +91,8 @@ contract MBerc20 is erc20Token {
         uint price;
     }
 
-    mapping (address => uint[]) ownership;
-
-    item[2] items;
+    mapping (address => uint[]) owned;
+    mapping (uint => item) items;
     // constructor (same as ercToken)
     // also sets owner address as msg.sender during deployment
     constructor(uint total) erc20Token (total) {
@@ -117,6 +116,7 @@ contract MBerc20 is erc20Token {
 
 
     // state variables
+
     mapping(address => bool) whitelisted;
     address owner; // set by constructor
 
@@ -148,6 +148,19 @@ contract MBerc20 is erc20Token {
         return true;
     }
 
+    function redeem (uint _item) public returns (bool) {
+        require(balances[msg.sender] >= items[_item].price, "You don't have enough funds to buy this item");
+        uint tokens = items[_item].price;
+        balances[msg.sender] -= tokens;
+        TotalSupply -= tokens;
+        owned[msg.sender].push(_item);
+        return true;
+    }
+    
+    function viewOwned (address user) public  view returns (uint[] memory) {
+        return owned[user];
+    }
+
 
     function changeOwner (address newOwner) public onlyOwner returns (bool) {
         address oldOwner = owner;
@@ -155,24 +168,4 @@ contract MBerc20 is erc20Token {
         emit Chown(oldOwner, newOwner);
         return true;
     }
-    
-
-    function redeem(uint _item) public returns (bool) {
-        uint tokens = items[_item].price;
-        return redemption(_item, tokens);
-
-    }
-
-    // function (allows any address to redeems tokens for another asset, address must own these tokens)
-    function redemption (uint _item, uint tokens) private enoughBalance(msg.sender, tokens) returns (bool) {
-        balances[msg.sender] -= tokens;
-        TotalSupply -= tokens;
-        ownership[msg.sender].push(_item);
-        emit redeemed(msg.sender,_item ,tokens);
-        return true;
-    }
-
-    function viewOwned(address user) public view returns (uint[] memory) {
-        return ownership[user];
-    }
-}
+} 

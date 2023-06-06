@@ -8,7 +8,10 @@ getting ready for my first game 😃😃
 
 ## Description
 
-it's an erc20 token contract duhh
+finalProject.sol is an erc20 token contract duhh,
+
+
+DEGEN.sol is a degen erc20 toekn that allows an owner to purchase ingame items
 
 ## Getting Started
 go to remix and deploy to the network of your choice
