@@ -19,7 +19,7 @@ transaction () {
                                             : !self.VaultCapability0.check() && self.VaultCapability1.check() ? 01
                                             : 10
 
-        var Vaultcondition = self.VaultAccess.getType().identifier == "A.01.FlowToken.Vault" ? true : false
+        var Vaultcondition = self.VaultAccess.getType() == Type<@FlowToken.Vault>()? true : false
 
         // Check if a Flow Token Vault exists
 

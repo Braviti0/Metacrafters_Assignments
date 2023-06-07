@@ -12,7 +12,7 @@ transaction () {
         self.VaultAccess =  signer.borrow<&redTibbyToken.Vault>(from: redTibbyToken.VaultStoragePath)
         self.VaultCapability = signer.getCapability<&redTibbyToken.Vault{FungibleToken.Balance, FungibleToken.Receiver, redTibbyToken.adminAccess}>(/public/rTT)
 
-        var condition = self.VaultAccess.getType().identifier == "A.02.redTibbyToken.Vault" ? true : false
+        var condition = self.VaultAccess.getType() == Type<@redTibbyToken.Vault>() ? true : false
 
         // Check if a redTibbyToken Vault exists
 

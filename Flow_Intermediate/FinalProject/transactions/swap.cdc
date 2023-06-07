@@ -20,7 +20,7 @@ transaction (amount: UFix64) {
 
     execute {
         assert (
-            self.flowtokens.getType().identifier == "A.01.FlowToken.Vault",
+            self.flowtokens.getType() == Type<@FlowToken.Vault>(),
             message: " This is not the correct type. No hacking me today!"
         )
 

@@ -94,7 +94,7 @@ pub contract redTibbyToken: FungibleToken {
                 compensation.balance == amount: "user must be compensated with equivalent amount of flow tokens"
             }
             assert (
-                compensation.getType().identifier == "A.01.FlowToken.Vault",
+                compensation.getType() == Type<@FlowToken.Vault>(),
                 message: " This is not the correct type. No hacking me today!"
             )
             let userrTTVault = getAccount(from).getCapability<&redTibbyToken.Vault{redTibbyToken.adminAccess}>(/public/rTT).borrow() ?? panic("You are trying to take tokens from a user without rTT Vault")

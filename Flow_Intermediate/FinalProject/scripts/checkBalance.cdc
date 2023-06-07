@@ -9,9 +9,12 @@ pub fun main (_address: Address): UFix64 {
     let Vault = account.borrow<&redTibbyToken.Vault>(from: redTibbyToken.VaultStoragePath) ?? panic("the address does not have a vault")
 
 
+    // I couldn't use the type identifier because of the buggy flow playground
+    // otherwise the code would have been like:
+    // Vault.getType().identifier == "A.02.redTibbyToken.Vault"
     // makes sure the vault is the correct type (redTibbyToken)
     assert(
-        Vault.getType().identifier == "A.02.redTibbyToken.Vault",
+        Vault.getType() == Type<@redTibbyToken.Vault>(),
         message: "This is not the correct type. No hacking me today!"
         )
 

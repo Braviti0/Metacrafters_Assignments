@@ -15,12 +15,12 @@ pub fun main (_address: Address): [Wallet] {
 
   // makes sure the vault is the correct type (redTibbyToken)
   assert(
-    rTTVault.getType().identifier == "A.02.redTibbyToken.Vault",
+    rTTVault.getType() == Type<@redTibbyToken.Vault>(),
     message: "This is not the correct type. No hacking me today!"
   )
 
   assert (
-    flowVault.getType().identifier == "A.01.FlowToken.Vault",
+    flowVault.getType() == Type<@FlowToken.Vault>(),
     message: " This is not the correct type. No hacking me today!"
   )
       

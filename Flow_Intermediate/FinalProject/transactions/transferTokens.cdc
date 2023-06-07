@@ -1,5 +1,5 @@
-import redTibbyToken from "./rTT.cdc"
-import FungibleToken from "./FTstandard.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
+import FungibleToken from "../contracts/FTstandard.cdc"
 
 transaction(recipient: Address, amount: UFix64) {
 
@@ -8,9 +8,9 @@ transaction(recipient: Address, amount: UFix64) {
   let RecipientVault: &redTibbyToken.Vault{FungibleToken.Receiver}
 
   prepare(signer: AuthAccount) {
-    // Borrow signer's `&FlowToken.Vault`
+    // Borrow signer's `&redtibby.Vault`
     self.Vault = signer.borrow<&redTibbyToken.Vault>(from: /storage/rTT) ?? panic ("You do not own a Vault")
-    // Borrow recipient's `&FlowToken.Vault{FungibleToken.Receiver}`
+    // Borrow recipient's `&redtibby.Vault{FungibleToken.Receiver}`
     self.RecipientVault = getAccount(recipient).getCapability(/public/rTT)
               .borrow<&redTibbyToken.Vault{FungibleToken.Receiver}>() ?? panic ("The receipient does not own a vault")
   }

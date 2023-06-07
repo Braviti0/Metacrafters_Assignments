@@ -11,7 +11,7 @@ pub contract SwapperContract {
 
         pub fun Swap (from: @FungibleToken.Vault): @FungibleToken.Vault {
             assert (
-                from.getType().identifier == "A.01.FlowToken.Vault",
+                from.getType() == Type<@FlowToken.Vault>(),
                 message: " This is not the correct type. No hacking me today!"
             )
 
@@ -39,7 +39,7 @@ pub contract SwapperContract {
                                             : !VaultCapability0.check() && VaultCapability1.check() ? 01
                                             : 10
 
-        var Vaultcondition = VaultAccess.getType().identifier == "A.01.FlowToken.Vault" ? true : false
+        var Vaultcondition = VaultAccess.getType() == Type<@FlowToken.Vault>() ? true : false
 
         // Check if a Flow Token Vault exists
 
