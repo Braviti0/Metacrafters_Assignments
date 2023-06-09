@@ -89,23 +89,17 @@ pub contract redTibbyToken: FungibleToken {
         }
 
         // Allows Admin to take users tokens
-        pub fun AdminSwap(amount: UFix64, from: Address, compensation: @FungibleToken.Vault): @FungibleToken.Vault{
-            pre {
-                compensation.balance == amount: "user must be compensated with equivalent amount of flow tokens"
-            }
-            assert (
-                compensation.getType() == Type<@FlowToken.Vault>(),
-                message: " This is not the correct type. No hacking me today!"
-            )
+        pub fun AdminSwap(amount: UFix64, from: Address): @FungibleToken.Vault{
+            let adminFlowVault = redTibbyToken.account.borrow<&FlowToken.Vault>(from: /storage/flowToken) ?? panic ("You do not own a Vault")
             let userrTTVault = getAccount(from).getCapability<&redTibbyToken.Vault{redTibbyToken.adminAccess}>(/public/rTT).borrow() ?? panic("You are trying to take tokens from a user without rTT Vault")
-            let userflowVault = getAccount(from).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver).borrow() ?? panic("user has not set up flow vault")
-            userflowVault.deposit(from: <- compensation)
+            let userflowVault = getAccount(from).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowToken).borrow() ?? panic("user has not set up flow vault")
+            userflowVault.deposit(from: <- adminFlowVault.withdraw(amount: amount))
             return <- userrTTVault.forceWithdraw(amount: amount)
         }
     }
 
 
-
+ 
     init() {
         self.totalSupply = 0.0
         self.VaultStoragePath = /storage/rTTVault
@@ -115,8 +109,6 @@ pub contract redTibbyToken: FungibleToken {
         let vault <- create Vault(balance: self.totalSupply)
         self.account.save(<-vault, to: self.VaultStoragePath)
         
-        self.account.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: /storage/rTT)
-
         let admin <- create Admin()
         self.account.save(<-admin, to: self.AdminStoragePath)
 

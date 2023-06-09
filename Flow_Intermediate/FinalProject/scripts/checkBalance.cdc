@@ -1,5 +1,6 @@
-import redTibbyToken from "../contracts/rTT.cdc"
 import FungibleToken from "../contracts/FTstandard.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
+import FlowToken from "../contracts/FlowToken.cdc"
 
 pub fun main (_address: Address): UFix64 {
 

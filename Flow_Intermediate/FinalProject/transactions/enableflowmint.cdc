@@ -1,5 +1,6 @@
-import FlowToken from "../contracts/FlowToken.cdc"
 import FungibleToken from "../contracts/FTstandard.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
+import FlowToken from "../contracts/FlowToken.cdc"
 
 transaction () {
     let admin : &FlowToken.Administrator

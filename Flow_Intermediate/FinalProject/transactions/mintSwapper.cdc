@@ -1,6 +1,3 @@
-import FungibleToken from "../contracts/FTstandard.cdc"
-import redTibbyToken from "../contracts/rTT.cdc"
-import FlowToken from "../contracts/FlowToken.cdc"
 import SwapperContract from "../contracts/Swapper.cdc"
 
 

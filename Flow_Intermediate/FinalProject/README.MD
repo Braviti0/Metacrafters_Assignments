@@ -4,7 +4,7 @@ Flow fungible token contract with supporting transactions and scripts
 
 test in the flow playground link here:
 
-https://play.flow.com/fbc58a03-0cf7-4300-8939-873f7e89f9ea?type=script&id=c6708196-4c65-4513-88b8-2fdd6f26d1dc
+https://play.flow.com/3c642245-ead8-439b-ad9d-50d12f49eb6b?type=tx&id=c4ec1a6f-aa73-4325-bfa9-438ef0f22ba4
 
 ## Description
 
@@ -15,7 +15,8 @@ admin can draw flow tokens at anytime and replace them with rtt
 
 ## Getting Started
 deploy all the contracts on the flow playground in this order
-on mainnet you only have to deploy the last 2 contracts
+on mainnet/testnet you only have to deploy the last 2 contracts
+modify import statements to import contracts from deployment addresses
 
 FTstandard - 0x01
 FlowToken - 0x01

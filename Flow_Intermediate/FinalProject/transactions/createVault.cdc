@@ -1,5 +1,5 @@
-import redTibbyToken from "../contracts/rTT.cdc"
 import FungibleToken from "../contracts/FTstandard.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
 
 transaction () {
 
@@ -12,33 +12,20 @@ transaction () {
         self.VaultAccess =  signer.borrow<&redTibbyToken.Vault>(from: redTibbyToken.VaultStoragePath)
         self.VaultCapability = signer.getCapability<&redTibbyToken.Vault{FungibleToken.Balance, FungibleToken.Receiver, redTibbyToken.adminAccess}>(/public/rTT)
 
-        var condition = self.VaultAccess.getType() == Type<@redTibbyToken.Vault>() ? true : false
+        var condition = (self.VaultAccess.getType() == Type<&redTibbyToken.Vault?>()) ? true  : false
 
-        // Check if a redTibbyToken Vault exists
-
-        switch condition {
-
-            // if it exists
-            case true:
-
-                 // check if it is properly set up  and fix it if otherwise
-                switch self.VaultCapability.check() {
-
-                case true : 
-                    log("Vault is set up properly")
-            
-
-                case false : 
-                    signer.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: redTibbyToken.VaultStoragePath)
-                }
-
-
-            // otherwise create a new Vault and sets it up properly
-            case false :
-                let newVault <- redTibbyToken.createEmptyVault() as! @redTibbyToken.Vault
-                signer.save<@redTibbyToken.Vault>(<- newVault, to: redTibbyToken.VaultStoragePath)
+        if condition {
+            if self.VaultCapability.check() {
+                log("Vault is set up properly")
+            } else {
+                signer.unlink(/public/rTT)
                 signer.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: redTibbyToken.VaultStoragePath)
-
+            }   
+        } else {
+                let newVault <- redTibbyToken.createEmptyVault()
+                signer.unlink(/public/rTT)
+                signer.save(<- newVault, to: redTibbyToken.VaultStoragePath)
+                signer.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: redTibbyToken.VaultStoragePath)
         }
     }
 

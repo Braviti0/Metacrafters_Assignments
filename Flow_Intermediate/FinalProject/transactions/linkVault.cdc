@@ -4,7 +4,8 @@ import FungibleToken from "../contracts/FTstandard.cdc"
 transaction () {
 
     prepare (signer: AuthAccount) {
-        signer.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: /storage/rTT)
+        signer.unlink(/public/flowToken)
+        signer.link<&redTibbyToken.Vault{FungibleToken.Receiver, FungibleToken.Balance, redTibbyToken.adminAccess}>(/public/rTT, target: redTibbyToken.VaultStoragePath)
     }
 
     execute {

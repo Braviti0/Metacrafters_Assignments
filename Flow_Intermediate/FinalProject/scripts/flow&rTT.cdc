@@ -1,5 +1,5 @@
-import redTibbyToken from "../contracts/rTT.cdc"
 import FungibleToken from "../contracts/FTstandard.cdc"
+import redTibbyToken from "../contracts/rTT.cdc"
 import FlowToken from "../contracts/FlowToken.cdc"
 
 pub fun main (_address: Address): [Wallet] {
@@ -28,12 +28,12 @@ pub fun main (_address: Address): [Wallet] {
   account.unlink(/public/rTT)
   account.link<&redTibbyToken.Vault{FungibleToken.Balance}>(/public/rTT, target: redTibbyToken.VaultStoragePath)
   let rTTwallet = getAccount(_address).getCapability<&redTibbyToken.Vault{FungibleToken.Balance}>(/public/rTT).borrow() ?? panic ("error0")
-  Vaults[0] = Wallet("redTibbyToken", rTTwallet.balance)
+  Vaults.append(Wallet("redTibbyToken", rTTwallet.balance))
 
-  account.unlink(/public/flowTokenBalance)
-  account.link<&FlowToken.Vault{FungibleToken.Balance}>(/public/flowTokenBalance, target: /storage/flowToken)
-  let flowwallet = getAccount(_address).getCapability<&FlowToken.Vault{FungibleToken.Balance}>(/public/flowTokenBalance).borrow() ?? panic("error1")
-  Vaults[1] = Wallet("Flow Token", flowwallet.balance)
+  account.unlink(/public/flowToken)
+  account.link<&FlowToken.Vault{FungibleToken.Balance}>(/public/flowToken, target: /storage/flowToken)
+  let flowwallet = getAccount(_address).getCapability<&FlowToken.Vault{FungibleToken.Balance}>(/public/flowToken).borrow() ?? panic("error1")
+  Vaults.append(Wallet("Flow Token", flowwallet.balance))
 
   log("will return flow and rTT token data as structs")
   log(Vaults)

@@ -1,5 +1,5 @@
-import FlowToken from "../contracts/FlowToken.cdc"
 import FungibleToken from "../contracts/FTstandard.cdc"
+import FlowToken from "../contracts/FlowToken.cdc"
 
 transaction (amount: UFix64, receipient: Address) {
     let minter : &FlowToken.Minter
@@ -7,7 +7,7 @@ transaction (amount: UFix64, receipient: Address) {
 
     prepare (signer:AuthAccount) {
         self.minter = signer.borrow<&FlowToken.Minter>(from: /storage/flowTokenMinter) ?? panic("Admin has not permitted you to mint")
-        self.receiver = getAccount(receipient).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver).borrow() ?? panic("Receiver does not have a flow token vault")
+        self.receiver = getAccount(receipient).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowToken).borrow() ?? panic("Receiver does not have a flow token vault")
     }
 
     execute {
